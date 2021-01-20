@@ -7,6 +7,9 @@ Haptic::Haptic(byte pin) {
 
 void Haptic::init() {
   pinMode(pin, OUTPUT);
+  setIntensity(9);
+  setFrequency(0);
+  setDuration(200);
   update();
 }
 

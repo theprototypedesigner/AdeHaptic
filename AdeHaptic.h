@@ -22,9 +22,9 @@ class Haptic {
     Haptic(byte pin);
 
     void init();
-    void setIntensity(byte intensity = 9);
-    void setFrequency(float frequency = 0);
-    void setDuration(int duration = 200);
+    void setIntensity(byte intensity);
+    void setFrequency(float frequency);
+    void setDuration(int duration);
     void on();
     void off();
     void update();
