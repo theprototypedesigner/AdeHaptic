@@ -10,7 +10,6 @@ void Haptic::init() {
   setIntensity(9);
   setFrequency(0);
   setDuration(200);
-  update();
 }
 
 void Haptic::setIntensity(byte intensity) {
