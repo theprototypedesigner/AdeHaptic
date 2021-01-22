@@ -1,62 +1,70 @@
 #include "AdeHaptic.h"
 
-Haptic::Haptic(byte pin) {
-  this->pin = pin;
-  init();
+#define DEFAULT_INTENSITY 255
+#define DEFAULT_FREQUENCY 0
+#define DEFAULT_DURATION 200
+
+Haptic::Haptic(byte pin) : _pin(pin) {
+  this->init(DEFAULT_INTENSITY, DEFAULT_FREQUENCY, DEFAULT_DURATION);
 }
 
-void Haptic::init() {
-  pinMode(pin, OUTPUT);
-  setIntensity(9);
-  setFrequency(0);
-  setDuration(200);
+Haptic::Haptic(byte pin, byte intensity)  : _pin(pin) {
+  this->init(intensity, DEFAULT_FREQUENCY, DEFAULT_DURATION);
+}
+
+Haptic::Haptic(byte pin, byte intensity, short frequency)  : _pin(pin) {
+  this->init(intensity, frequency, DEFAULT_DURATION);
+}
+
+Haptic::Haptic(byte pin, byte intensity, short frequency, short duration)  : _pin(pin) {
+  this->init(intensity, frequency, duration);
+}
+
+void Haptic::init(byte intensity, short frequency, short duration) {
+  this->setIntensity(intensity);
+  this->setFrequency(frequency);
+  this->setDuration(duration);
+  pinMode(_pin, OUTPUT);
 }
 
 void Haptic::setIntensity(byte intensity) {
-  this->intensity = map(intensity,0,9,50,255);
-  if(!isOff) analogWrite(pin, this->intensity);
+  _intensity = map(intensity,0,9,50,255);
+  if(!isOff) analogWrite(_pin, _intensity);
 }
-
 
 void Haptic::setFrequency(float frequency) {
-  if(frequency==0) {
-    this->frequency = 0;  
-  } else {
-    this->frequency = round(1000/frequency);
-  }
+  if(frequency==0) _frequency = 0;  
+  else _frequency = round(1000/frequency);
 }
 
-void Haptic::setDuration(int duration) {
-  this->duration = duration;
+void Haptic::setDuration(short duration) {
+  _duration = duration;
 }
 
 void Haptic::on() {
   lastOnTime = millis();
   turnOn = true;
-  
 }
 
 void Haptic::off() {
-  analogWrite(pin, 0);
+  analogWrite(_pin, 0);
   turnOn = false;
 }
 
 void Haptic::update() {
   if(turnOn) {
     if(isOff) {
-    if (frequency == 0) {
-      analogWrite(pin, intensity);
+    if (_frequency == 0) {
+      analogWrite(_pin, _intensity);
       isOff = false;
-      return;
-    }
-    if(millis() - lastOffTime > frequency) {
-      analogWrite(pin, intensity);
+    } else if(millis() - lastOffTime > _frequency) {
+      analogWrite(_pin, _intensity);
       isOff = false;
       lastOnTime = millis();
     }
-    } else if(frequency != 0) {
-      if(millis() - lastOnTime > duration) {
-        analogWrite(pin, 0);
+    } else if(_frequency != 0) {
+      if(millis() - lastOnTime > _duration) {
+        analogWrite(_pin, 0);
         lastOffTime = millis();
         isOff = true;
       }
